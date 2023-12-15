@@ -77,7 +77,7 @@ public class BlueRight extends LinearOpMode {
         blar.RunMotors(32,0.2);
         blar.Turn90(true, 0.2);
         blar.RunMotorHang(6.5,1);
-        blar.RunMotors(83, 0.5);
+        blar.RunMotors(83, 0.4);
         blar.StrafeByInch(12, false, 0.2);
         blar.RunMotors(4,0.2);
         blar.RunMotors(-4,0.2);

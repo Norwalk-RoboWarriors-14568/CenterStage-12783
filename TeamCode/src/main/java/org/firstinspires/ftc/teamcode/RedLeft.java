@@ -59,7 +59,7 @@ public class RedLeft extends LinearOpMode {
         blar.StrafeByInch(18, false, 0.2);
         blar.RunMotorHang(6.5,0.75);
         blar.RunMotors(83,0.2);
-        blar.StrafeByInch(31, true, 0.2);
+        blar.StrafeByInch(33, true, 0.2);
         motorHang.setPower(0);
         blar.RunMotors(5, 0.2);
         blar.RunMotorHang(-6.5,1);
@@ -80,7 +80,7 @@ public class RedLeft extends LinearOpMode {
         blar.Turn90(false, 0.2);
         blar.RunMotorHang(6.5,1);
         blar.RunMotors(83, 0.3);
-        blar.StrafeByInch(14, true, 0.2);
+        blar.StrafeByInch(15, true, 0.2);
         blar.RunMotors(4,0.2);
         blar.RunMotors(-4,0.2);
         blar.RunMotorHang(-6.5,0.75);
