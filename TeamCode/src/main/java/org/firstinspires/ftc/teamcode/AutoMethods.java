@@ -10,6 +10,7 @@ public class AutoMethods {
     double StrafeTPI = 50.2512563;
     double TicksPerDeg = 10.17;
     double DegAtBoard = -25;
+    double XOffSet = -2;
     private DcMotor motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang;
     private int leftTarget,left2Target,rightTarget,right2Target;
 
@@ -155,7 +156,7 @@ public class AutoMethods {
 
     void SquareOnTag (double x, double pitch, double motorPower){
         int rightTicks, right2Ticks, leftTicks, left2Ticks;
-        int strafeTick = Math.abs(StrafeInchesToTicks(x-2));
+        int strafeTick = Math.abs(StrafeInchesToTicks(x+XOffSet));
         double degree = pitch - DegAtBoard;
         int angleTicks = Math.abs((int)( degree * TicksPerDeg));
         boolean strafeRight = x-2 >= 0;

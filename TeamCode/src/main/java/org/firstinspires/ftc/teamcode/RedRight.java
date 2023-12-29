@@ -57,7 +57,7 @@ public class RedRight extends LinearOpMode {
         }
         else if (pos == Webcam.Position.Right){
             aprilTag.setId(6);
-            //RunRight(autoMethods);
+            RunRight(autoMethods);
         }
         else{
             aprilTag.setId(5);
@@ -68,14 +68,14 @@ public class RedRight extends LinearOpMode {
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(17,0.5);
-        //blar.RunMotorHang(6.5,1);
+        blar.RunMotorHang(6.5,1);
         blar.StrafeByInch(10, true, 0.4);
         //motorIntake.setPower(-0.4);
         //sleep(1500);
         //motorIntake.setPower(0);
         blar.StrafeByInch(13,true,0.4);
         blar.Turn90(false, 0.4);
-        blar.StrafeByInch(3, false, 0.4);
+        //blar.StrafeByInch(3, false, 0.4);
         blar.RunMotors(8.25, 0.2);
         //motorHang.setPower(0);
         //blar.RunMotorHang(-6.5,1);
@@ -123,17 +123,27 @@ public class RedRight extends LinearOpMode {
         sleep(2000);
         motorHang.setPower(0);
     }
-    void GetToBoard(){
+    void GetToBoard()throws InterruptedException{
         AprilTagTest.TagLocation location = null;
-        while(location == null){
+        boolean isLess;
+        while(location == null || location.x < autoMethods.XOffSet){
+            if(location != null){
+                isLess = (location.x < autoMethods.XOffSet);
+            }
+
             location = aprilTag.GetPositon(webcam.tagProcessor);
             autoMethods.Strafe(false,0.2);
-        }
+
         telemetry.addData("detected x", location.x);
         telemetry.addData("detected y", location.y);
         telemetry.addData("detected pitch", location.pitch);
         telemetry.update();
         autoMethods.ZeroMotors();
-        autoMethods.SquareOnTag(location.x, location.pitch,0.2);
+        //autoMethods.SquareOnTag(location.x, location.pitch,0.2);
+        autoMethods.RunMotors(location.y - 8.5,0.2);
+        autoMethods.RunMotors(-2,0.2);
+        autoMethods.RunMotorHang(-6.5,1);
+        autoMethods.StrafeByInch(20,true,0.5);
+        sleep(10000);
     }
 }

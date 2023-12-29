@@ -51,9 +51,9 @@ public class BlueLeft extends LinearOpMode {
         blar.RunMotors(17,0.5);
         blar.RunMotorHang(6.5,1);
         blar.StrafeByInch(13, false, 0.4);
-        motorIntake.setPower(-0.4);
-        sleep(1500);
-        motorIntake.setPower(0);
+        //motorIntake.setPower(-0.4);
+        //sleep(1500);
+        //motorIntake.setPower(0);
         blar.StrafeByInch(10,false,0.4);
         blar.Turn90(true, 0.4);
         blar.StrafeByInch(3, true, 0.4);
