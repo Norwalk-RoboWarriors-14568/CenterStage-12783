@@ -18,6 +18,7 @@ public class RedRight extends LinearOpMode {
 
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
+    private double StrafeInches;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -41,29 +42,30 @@ public class RedRight extends LinearOpMode {
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
         while(!opModeIsActive()) {
-
             pos = webcam.CheckCamera();
-
             telemetry.addData("detected x", pos);
             telemetry.update();
             sleep (2000);
-
         }
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, false);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, true);
         if(pos == Webcam.Position.Left){
             aprilTag.setId(4);
             RunLeft(autoMethods);
+            StrafeInches = 36;
         }
         else if (pos == Webcam.Position.Right){
             aprilTag.setId(6);
             RunRight(autoMethods);
+            StrafeInches = 24;
         }
         else{
             aprilTag.setId(5);
             RunCenter(autoMethods);
+            StrafeInches = 30;
         }
-        GetToBoard();
+        autoMethods.GetToBoard(aprilTag, webcam,0.2);
+        autoMethods.StrafeByInch(StrafeInches,true,0.2);
 
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
@@ -123,27 +125,6 @@ public class RedRight extends LinearOpMode {
         sleep(2000);
         motorHang.setPower(0);
     }
-    void GetToBoard()throws InterruptedException{
-        AprilTagTest.TagLocation location = null;
-        boolean isLess;
-        while(location == null || location.x < autoMethods.XOffSet){
-            if(location != null){
-                isLess = (location.x < autoMethods.XOffSet);
-            }
 
-            location = aprilTag.GetPositon(webcam.tagProcessor);
-            autoMethods.Strafe(false,0.2);
 
-        telemetry.addData("detected x", location.x);
-        telemetry.addData("detected y", location.y);
-        telemetry.addData("detected pitch", location.pitch);
-        telemetry.update();
-        autoMethods.ZeroMotors();
-        //autoMethods.SquareOnTag(location.x, location.pitch,0.2);
-        autoMethods.RunMotors(location.y - 8.5,0.2);
-        autoMethods.RunMotors(-2,0.2);
-        autoMethods.RunMotorHang(-6.5,1);
-        autoMethods.StrafeByInch(20,true,0.5);
-        sleep(10000);
-    }
 }

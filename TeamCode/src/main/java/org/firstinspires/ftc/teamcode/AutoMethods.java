@@ -153,54 +153,57 @@ public class AutoMethods {
                 motorRight.getCurrentPosition() > rightTarget - 10 && motorRight.getCurrentPosition() < rightTarget + 10 &&
                 motorRight2.getCurrentPosition() > right2Target - 10 && motorRight2.getCurrentPosition() < right2Target + 10;
     }
-
-    void SquareOnTag (double x, double pitch, double motorPower){
-        int rightTicks, right2Ticks, leftTicks, left2Ticks;
-        int strafeTick = Math.abs(StrafeInchesToTicks(x+XOffSet));
+    
+    void FixPitch( double pitch, double motorPower){
         double degree = pitch - DegAtBoard;
         int angleTicks = Math.abs((int)( degree * TicksPerDeg));
-        boolean strafeRight = x-2 >= 0;
         boolean turnRight = degree >= 0;
-        if(strafeRight && turnRight){
-            right2Ticks =  -strafeTick - angleTicks;
-            rightTicks =  strafeTick - angleTicks;
-            left2Ticks = strafeTick + angleTicks;
-            leftTicks = -strafeTick + angleTicks;
+        if(turnRight){
+            motorRight2.setTargetPosition(motorRight2.getTargetPosition() + angleTicks);
+            motorRight.setTargetPosition(motorRight.getCurrentPosition() + angleTicks);
+            motorLeft2.setTargetPosition(motorLeft2.getCurrentPosition() - angleTicks);
+            motorLeft.setTargetPosition(motorLeft.getCurrentPosition() - angleTicks);
         }
-        else if(strafeRight){
-            right2Ticks = -strafeTick + angleTicks;
-            rightTicks = strafeTick + angleTicks;
-            left2Ticks = strafeTick - angleTicks;
-            leftTicks = -strafeTick - angleTicks;
+        else if(!turnRight){
+            motorRight2.setTargetPosition(motorRight2.getTargetPosition() - angleTicks);
+            motorRight.setTargetPosition(motorRight.getCurrentPosition() - angleTicks);
+            motorLeft2.setTargetPosition(motorLeft2.getCurrentPosition() + angleTicks);
+            motorLeft.setTargetPosition(motorLeft.getCurrentPosition() + angleTicks);
         }
-        else if(turnRight){
-            right2Ticks = strafeTick - angleTicks;
-            rightTicks = -strafeTick - angleTicks;
-            left2Ticks = -strafeTick + angleTicks;
-            leftTicks = strafeTick + angleTicks;
-        }
-        else{
-            right2Ticks = strafeTick + angleTicks;
-            rightTicks = -strafeTick + angleTicks;
-            left2Ticks = -strafeTick - angleTicks;
-            leftTicks = strafeTick - angleTicks;
-        }
-        int maxTicks = Math.max(left2Ticks, Math.max(leftTicks, Math.max(Math.abs(right2Ticks), Math.abs(rightTicks))));
-        motorRight2.setTargetPosition(motorRight2.getTargetPosition() + right2Ticks);
-        motorRight.setTargetPosition(motorRight.getCurrentPosition() + rightTicks);
-        motorLeft2.setTargetPosition(motorLeft2.getCurrentPosition() + left2Ticks);
-        motorLeft.setTargetPosition(motorLeft.getCurrentPosition() + leftTicks);
         motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLeft2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorRight2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         while(!AtTarget()) {
-            motorLeft.setPower(motorPower * Math.abs(leftTicks) / maxTicks);
-            motorRight.setPower(motorPower * Math.abs(rightTicks) / maxTicks);
-            motorRight2.setPower(motorPower * Math.abs(right2Ticks) / maxTicks);
-            motorLeft2.setPower(motorPower * Math.abs(left2Ticks) / maxTicks);
+            motorLeft.setPower(motorPower);
+            motorRight.setPower(motorPower);
+            motorRight2.setPower(motorPower);
+            motorLeft2.setPower(motorPower);
         }
         ZeroMotors();
+
     }
+    void GetToBoard(AprilTagTest aprilTag, Webcam webcam, double motorPower)throws InterruptedException{
+        AprilTagTest.TagLocation location = null;
+        boolean isLess = false;
+        boolean tagFound = false;
+        while(!tagFound || isLess && location.x < XOffSet || !isLess && location.x > XOffSet) {
+            if (location != null && !tagFound) {
+                isLess = location.x < XOffSet;
+                FixPitch(location.pitch, motorPower);
+                tagFound = true;
+            }
+
+            location = aprilTag.GetPositon(webcam.tagProcessor);
+            Strafe(false, motorPower);
+        }
+        ZeroMotors();
+        RunMotors(location.y - 8.5,motorPower);
+        RunMotors(-2,motorPower);
+        RunMotorHang(-6.5,1);
+        StrafeByInch(20,true,motorPower);
+
+    }
+
 
 }
