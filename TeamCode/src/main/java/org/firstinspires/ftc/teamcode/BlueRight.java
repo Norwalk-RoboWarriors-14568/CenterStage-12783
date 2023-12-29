@@ -36,7 +36,7 @@ public class BlueRight extends LinearOpMode {
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry);
         webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
         while(!opModeIsActive()){
 
@@ -46,11 +46,11 @@ public class BlueRight extends LinearOpMode {
             telemetry.update();
             sleep (2000);
 
+
         }
+        webcam.visionPortal.setProcessorEnabled(webcam.tfod, false);
+        webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, true);
         waitForStart();
-        if(pos == Webcam.Position.Left) RunLeft(autoMethods);
-        else if (pos == Webcam.Position.Right) RunRight(autoMethods);
-        else RunCenter(autoMethods);
         if(pos == Webcam.Position.Left){
             aprilTag.setId(1);
             RunLeft(autoMethods);

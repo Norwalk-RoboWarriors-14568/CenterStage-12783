@@ -33,7 +33,7 @@ public class RedLeft extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos = Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry);
         webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), true);
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
@@ -47,10 +47,9 @@ public class RedLeft extends LinearOpMode {
             sleep (2000);
 
         }
+        webcam.visionPortal.setProcessorEnabled(webcam.tfod, false);
+        webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, true);
         waitForStart();
-        if(pos == Webcam.Position.Left) RunLeft(autoMethods);
-        else if (pos == Webcam.Position.Right) RunRight(autoMethods);
-        else RunCenter(autoMethods);
         if(pos == Webcam.Position.Left){
             aprilTag.setId(4);
             RunLeft(autoMethods);
@@ -63,7 +62,8 @@ public class RedLeft extends LinearOpMode {
             aprilTag.setId(5);
             RunCenter(autoMethods);
         }
-        //GetToBoard();
+        autoMethods.GetToBoard(aprilTag, webcam,0.2,true);
+        //autoMethods.StrafeByInch(StrafeInches,true,0.2);
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(20,0.2);
@@ -97,7 +97,7 @@ public class RedLeft extends LinearOpMode {
         blar.RunMotors(32,0.2);
         blar.Turn90(false, 0.2);
         blar.RunMotorHang(6.5,1);
-        blar.RunMotors(79, 0.3);
+        blar.RunMotors(73, 0.3);
         /*blar.StrafeByInch(14, true, 0.2);
         blar.RunMotors(4,0.2);
         blar.RunMotors(-4,0.2);
@@ -108,16 +108,15 @@ public class RedLeft extends LinearOpMode {
          */
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
-        sleep(5000);
         blar.RunMotors(25,0.2);
         blar.StrafeByInch(4, true, 0.2);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         blar.RunMotorHang(6.5,0.3);
-        blar.StrafeByInch(72, true, 0.2);
-        /*blar.Turn90(false, 0.2);
-        //blar.StrafeByInch(4, false, 0.2);
+        blar.StrafeByInch(72, true, 0.4);
+        blar.Turn90(false, 0.2);
+        /*//blar.StrafeByInch(4, false, 0.2);
         blar.RunMotors(9, 0.2);
         motorHang.setPower(0);
         blar.RunMotorHang(-6.5,1);

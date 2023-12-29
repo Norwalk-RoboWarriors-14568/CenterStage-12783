@@ -36,7 +36,7 @@ public class RedRight extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos = Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry);
         webcam = new Webcam(camera, true);
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
@@ -64,7 +64,7 @@ public class RedRight extends LinearOpMode {
             RunCenter(autoMethods);
             StrafeInches = 30;
         }
-        autoMethods.GetToBoard(aprilTag, webcam,0.2);
+        autoMethods.GetToBoard(aprilTag, webcam,0.2,false);
         autoMethods.StrafeByInch(StrafeInches,true,0.2);
 
     }
