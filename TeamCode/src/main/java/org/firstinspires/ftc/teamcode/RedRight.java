@@ -33,47 +33,46 @@ public class RedRight extends LinearOpMode {
         motorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeft2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Webcam.Position pos= Webcam.Position.Left;
+        Webcam.Position pos = Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
         autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
-        webcam = new Webcam(camera, false);
+        webcam = new Webcam(camera, true);
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
-        while(!opModeIsActive()) {
+        while (!opModeIsActive()) {
 
             pos = webcam.CheckCamera();
 
             telemetry.addData("detected x", pos);
             telemetry.update();
-            sleep (2000);
+            sleep(2000);
 
         }
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, false);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, true);
-        if(pos == Webcam.Position.Left){
+        if (pos == Webcam.Position.Left) {
             aprilTag.setId(4);
             RunLeft(autoMethods);
-        }
-        else if (pos == Webcam.Position.Right){
+        } else if (pos == Webcam.Position.Right) {
             aprilTag.setId(6);
             RunRight(autoMethods);
-        }
-        else{
+        } else {
             aprilTag.setId(5);
             RunCenter(autoMethods);
         }
         GetToBoard();
 
     }
+
     void RunRight(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(17,0.5);
-        blar.RunMotorHang(6.5,1);
+        blar.RunMotors(17, 0.5);
+        blar.RunMotorHang(6.5, 1);
         blar.StrafeByInch(10, true, 0.4);
         //motorIntake.setPower(-0.4);
         //sleep(1500);
         //motorIntake.setPower(0);
-        blar.StrafeByInch(13,true,0.4);
+        blar.StrafeByInch(13, true, 0.4);
         blar.Turn90(false, 0.4);
         //blar.StrafeByInch(3, false, 0.4);
         blar.RunMotors(8.25, 0.2);
@@ -86,64 +85,72 @@ public class RedRight extends LinearOpMode {
 
 
     }
+
     void RunLeft(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(25,0.4);
+        blar.RunMotors(25, 0.4);
         blar.StrafeByInch(13, false, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
-        blar.RunMotorHang(6.5,1);
+        blar.RunMotorHang(6.5, 1);
         motorIntake.setPower(0);
-        blar.StrafeByInch(48,true,0.4);
-        motorHang.setPower(0);
+        blar.StrafeByInch(46, true, 0.4);
+      /*  motorHang.setPower(0);
         blar.Turn90(false, 0.4);
         blar.StrafeByInch(7, false, 0.4);
         blar.RunMotors(4.5, 0.2);
-        blar.RunMotorHang(-6.5,0.75);
-        blar.RunMotors(-4,0.5);
+        blar.RunMotorHang(-6.5, 0.75);
+        blar.RunMotors(-4, 0.5);
         blar.StrafeByInch(31, true, 0.4);
         sleep(3000);
         motorHang.setPower(0);
+
+       */
     }
+
     void RunCenter(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(26,0.4);
-        blar.RunMotorHang(6.5,0.75);
+        blar.RunMotors(26, 0.4);
+        blar.RunMotorHang(6.5, 0.75);
         blar.StrafeByInch(4, true, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.RunMotors(-2,0.4);
+        blar.RunMotors(-2, 0.4);
         blar.Turn90(false, 0.4);
         blar.StrafeByInch(3, false, 0.4);
-        blar.RunMotors(32, 0.4);
-        blar.RunMotors(3, 0.2);
+        blar.RunMotors(18, 0.4);
+       /* blar.RunMotors(3, 0.2);
         motorHang.setPower(0);
-        blar.RunMotorHang(-6.5,0.75);
-        blar.RunMotors(-4,0.5);
+        blar.RunMotorHang(-6.5, 0.75);
+        blar.RunMotors(-4, 0.5);
         blar.StrafeByInch(25, true, 0.4);
         sleep(2000);
         motorHang.setPower(0);
+
+        */
     }
-    void GetToBoard()throws InterruptedException{
+
+    void GetToBoard() throws InterruptedException {
         AprilTagTest.TagLocation location = null;
         boolean isLess;
-        while(location == null || location.x < autoMethods.XOffSet){
-            if(location != null){
+        while (location == null || location.x < autoMethods.XOffSet) {
+            if (location != null) {
                 isLess = (location.x < autoMethods.XOffSet);
             }
 
             location = aprilTag.GetPositon(webcam.tagProcessor);
-            autoMethods.Strafe(false,0.2);
+            autoMethods.Strafe(false, 0.2);
 
-        telemetry.addData("detected x", location.x);
-        telemetry.addData("detected y", location.y);
-        telemetry.addData("detected pitch", location.pitch);
-        telemetry.update();
-        autoMethods.ZeroMotors();
-        //autoMethods.SquareOnTag(location.x, location.pitch,0.2);
-        autoMethods.RunMotors(location.y - 8.5,0.2);
-        autoMethods.RunMotors(-2,0.2);
-        autoMethods.RunMotorHang(-6.5,1);
-        autoMethods.StrafeByInch(20,true,0.5);
-        sleep(10000);
+            telemetry.addData("detected x", location.x);
+            telemetry.addData("detected y", location.y);
+            telemetry.addData("detected pitch", location.pitch);
+            telemetry.update();
+            autoMethods.ZeroMotors();
+            //autoMethods.SquareOnTag(location.x, location.pitch,0.2);
+            autoMethods.RunMotors(location.y - 8.5, 0.2);
+            autoMethods.RunMotors(-2, 0.2);
+            autoMethods.RunMotorHang(-6.5, 1);
+            autoMethods.StrafeByInch(20, true, 0.5);
+            sleep(10000);
+        }
     }
 }

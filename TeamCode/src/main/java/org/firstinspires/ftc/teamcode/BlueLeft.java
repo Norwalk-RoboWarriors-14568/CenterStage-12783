@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptTensorFlowObjectDetection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvWebcam;
 
@@ -12,7 +13,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class BlueLeft extends LinearOpMode {
     Webcam webcam;
     private AutoMethods autoMethods;
-
+    AprilTagTest aprilTag;
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
 
@@ -31,7 +32,10 @@ public class BlueLeft extends LinearOpMode {
         motorLeft2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos= Webcam.Position.Left;
-
+        CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
+        aprilTag = new AprilTagTest(camera);
+        webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
+        webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
         autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
         webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
         while(!opModeIsActive()) {
@@ -46,6 +50,19 @@ public class BlueLeft extends LinearOpMode {
         if(pos == Webcam.Position.Left) RunLeft(autoMethods);
         else if (pos == Webcam.Position.Right) RunRight(autoMethods);
         else RunCenter(autoMethods);
+        if(pos == Webcam.Position.Left){
+            aprilTag.setId(1);
+            RunLeft(autoMethods);
+        }
+        else if (pos == Webcam.Position.Right){
+            aprilTag.setId(3);
+            RunRight(autoMethods);
+        }
+        else{
+            aprilTag.setId(2);
+            RunCenter(autoMethods);
+        }
+        //GetToBoard();
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(17,0.5);
@@ -57,13 +74,15 @@ public class BlueLeft extends LinearOpMode {
         blar.StrafeByInch(10,false,0.4);
         blar.Turn90(true, 0.4);
         blar.StrafeByInch(3, true, 0.4);
-        blar.RunMotors(17, 0.2);
-        motorHang.setPower(0);
+        blar.RunMotors(11, 0.2);
+        /* motorHang.setPower(0);
         blar.RunMotorHang(-6.5,1);
         blar.RunMotors(-4,0.5);
         blar.StrafeByInch(20, false, 0.4);
         sleep(2000);
         motorHang.setPower(0);
+        
+         */
 
 
     }
@@ -74,8 +93,8 @@ public class BlueLeft extends LinearOpMode {
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.StrafeByInch(45,false,0.4);
-        motorHang.setPower(0);
+        blar.StrafeByInch(42,false,0.4);
+       /* motorHang.setPower(0);
         blar.Turn90(true, 0.4);
         blar.StrafeByInch(7, true, 0.4);
         blar.RunMotors(3.5, 0.2);
@@ -84,6 +103,8 @@ public class BlueLeft extends LinearOpMode {
         blar.StrafeByInch(32, false, 0.4);
         sleep(3000);
         motorHang.setPower(0);
+
+        */
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(26,0.4);
@@ -95,13 +116,15 @@ public class BlueLeft extends LinearOpMode {
         blar.RunMotors(-2,0.4);
         blar.Turn90(true, 0.4);
         blar.StrafeByInch(3, true, 0.4);
-        blar.RunMotors(32, 0.4);
-        blar.RunMotors(3, 0.2);
+        blar.RunMotors(23, 0.4);
+        /* blar.RunMotors(5, 0.2);
         motorHang.setPower(0);
         blar.RunMotorHang(-6.5,0.75);
         blar.RunMotors(-4,0.5);
         blar.StrafeByInch(25, false, 0.4);
         sleep(2000);
         motorHang.setPower(0);
+
+         */
     }
 }
