@@ -63,19 +63,19 @@ public class RedLeft extends LinearOpMode {
             RunCenter(autoMethods);
         }
         autoMethods.GetToBoard(aprilTag, webcam,0.2,true);
-        //autoMethods.StrafeByInch(StrafeInches,true,0.2);
+        sleep(3000);
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(20,0.2);
-        blar.Turn90(false, 0.2);
-        blar.StrafeByInch(11,false,0.2);
+        blar.RunMotors(20,0.4);
+        blar.Turn90(false, 0.4);
+        blar.StrafeByInch(11,false,0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.StrafeByInch(18, false, 0.2);
+        blar.StrafeByInch(18, false, 0.4);
         blar.RunMotorHang(6.5,0.75);
-       /* blar.RunMotors(79,0.2);
-        blar.StrafeByInch(31, true, 0.2);
+        blar.RunMotors(72,0.5);
+        /*blar.StrafeByInch(31, true, 0.2);
         motorHang.setPower(0);
         blar.RunMotors(5, 0.2);
         blar.RunMotorHang(-6.5,1);
@@ -88,16 +88,16 @@ public class RedLeft extends LinearOpMode {
 
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(17,0.3);
-        blar.StrafeByInch(13, false, 0.2);
+        blar.RunMotors(17,0.4);
+        blar.StrafeByInch(12, false, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.StrafeByInch(13, true, 0.2);
-        blar.RunMotors(32,0.2);
-        blar.Turn90(false, 0.2);
+        blar.StrafeByInch(12, true, 0.4);
+        blar.RunMotors(32,0.4);
+        blar.Turn90(false, 0.4);
         blar.RunMotorHang(6.5,1);
-        blar.RunMotors(73, 0.3);
+        blar.RunMotors(69, 0.5);
         /*blar.StrafeByInch(14, true, 0.2);
         blar.RunMotors(4,0.2);
         blar.RunMotors(-4,0.2);
@@ -108,14 +108,14 @@ public class RedLeft extends LinearOpMode {
          */
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(25,0.2);
-        blar.StrafeByInch(4, true, 0.2);
-        motorIntake.setPower(-0.4);
+        blar.RunMotors(25,0.4);
+        blar.StrafeByInch(4, true, 0.4);
+        motorIntake.setPower(-0.45);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.RunMotorHang(6.5,0.3);
-        blar.StrafeByInch(72, true, 0.4);
-        blar.Turn90(false, 0.2);
+        blar.RunMotorHang(6.5,0.4);
+        blar.StrafeByInch(72, true, 0.5);
+        blar.Turn90(false, 0.4);
         /*//blar.StrafeByInch(4, false, 0.2);
         blar.RunMotors(9, 0.2);
         motorHang.setPower(0);

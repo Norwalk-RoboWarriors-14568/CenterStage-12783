@@ -63,7 +63,8 @@ public class BlueRight extends LinearOpMode {
             aprilTag.setId(2);
             RunCenter(autoMethods);
         }
-        //GetToBoard();
+        autoMethods.GetToBoard(aprilTag, webcam,0.2,false);
+        sleep(3000);
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(20,0.2);
