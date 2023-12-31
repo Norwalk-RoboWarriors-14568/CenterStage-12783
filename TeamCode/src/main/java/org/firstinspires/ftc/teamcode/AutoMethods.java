@@ -153,7 +153,7 @@ public class AutoMethods {
                 motorRight.getCurrentPosition() > rightTarget - 10 && motorRight.getCurrentPosition() < rightTarget + 10 &&
                 motorRight2.getCurrentPosition() > right2Target - 10 && motorRight2.getCurrentPosition() < right2Target + 10;
     }
-    
+
     void FixPitch( double pitch, double motorPower){
         double degree = pitch - DegAtBoard;
         int angleTicks = Math.abs((int)( degree * TicksPerDeg));
@@ -190,9 +190,9 @@ public class AutoMethods {
         while(!tagFound || isLess && location.x < XOffSet || !isLess && location.x > XOffSet) {
             if (location != null && !tagFound) {
                 isLess = location.x < XOffSet;
-                FixPitch(location.pitch, motorPower);
                 tagFound = true;
             }
+            FixPitch(location.pitch, motorPower);
 
             location = aprilTag.GetPositon(webcam.tagProcessor);
             Strafe(false, motorPower);
