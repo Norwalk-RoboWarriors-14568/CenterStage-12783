@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class AutoMethods {
     double TicsPerRevolution = 537.6;
     double Circumference = 11.87;
@@ -13,14 +15,16 @@ public class AutoMethods {
     double XOffSet = -2;
     private DcMotor motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang;
     private int leftTarget,left2Target,rightTarget,right2Target;
+    private Telemetry telemetry;
 
-    public AutoMethods(DcMotor left, DcMotor left2, DcMotor right, DcMotor right2, DcMotor inTake, DcMotor hang) {
+    public AutoMethods(DcMotor left, DcMotor left2, DcMotor right, DcMotor right2, DcMotor inTake, DcMotor hang, Telemetry telemetryIn) {
         motorLeft = left;
         motorLeft2 = left2;
         motorRight = right;
         motorRight2 = right2;
         motorIntake = inTake;
         motorHang = hang;
+        telemetry = telemetryIn;
     }
 
     int StrafeInchesToTicks(double inches) {
@@ -155,20 +159,22 @@ public class AutoMethods {
     }
 
     void FixPitch( double pitch, double motorPower){
+        telemetry.addData("x: ", pitch);
+        telemetry.update();
         double degree = pitch - DegAtBoard;
         int angleTicks = Math.abs((int)( degree * TicksPerDeg));
         boolean turnRight = degree >= 0;
         if(turnRight){
-            motorRight2.setTargetPosition(motorRight2.getTargetPosition() + angleTicks);
-            motorRight.setTargetPosition(motorRight.getCurrentPosition() + angleTicks);
-            motorLeft2.setTargetPosition(motorLeft2.getCurrentPosition() - angleTicks);
-            motorLeft.setTargetPosition(motorLeft.getCurrentPosition() - angleTicks);
-        }
-        else if(!turnRight){
-            motorRight2.setTargetPosition(motorRight2.getTargetPosition() - angleTicks);
+            motorRight2.setTargetPosition(motorRight2.getCurrentPosition() - angleTicks);
             motorRight.setTargetPosition(motorRight.getCurrentPosition() - angleTicks);
             motorLeft2.setTargetPosition(motorLeft2.getCurrentPosition() + angleTicks);
             motorLeft.setTargetPosition(motorLeft.getCurrentPosition() + angleTicks);
+        }
+        else {
+            motorRight2.setTargetPosition(motorRight2.getCurrentPosition() + angleTicks);
+            motorRight.setTargetPosition(motorRight.getCurrentPosition() + angleTicks);
+            motorLeft2.setTargetPosition(motorLeft2.getCurrentPosition() - angleTicks);
+            motorLeft.setTargetPosition(motorLeft.getCurrentPosition() - angleTicks);
         }
         motorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -183,7 +189,7 @@ public class AutoMethods {
         ZeroMotors();
 
     }
-    void GetToBoard(AprilTagTest aprilTag, Webcam webcam, double motorPower)throws InterruptedException{
+    void GetToBoard(AprilTagTest aprilTag, Webcam webcam, double motorPower, boolean strafeRight)throws InterruptedException{
         AprilTagTest.TagLocation location = null;
         boolean isLess = false;
         boolean tagFound = false;
@@ -195,9 +201,10 @@ public class AutoMethods {
             FixPitch(location.pitch, motorPower);
 
             location = aprilTag.GetPositon(webcam.tagProcessor);
-            Strafe(false, motorPower);
+            Strafe(strafeRight, motorPower);
         }
         ZeroMotors();
+        FixPitch(location.pitch, motorPower);
         RunMotors(location.y - 8.5,motorPower);
         RunMotors(-2,motorPower);
         RunMotorHang(-6.5,1);
