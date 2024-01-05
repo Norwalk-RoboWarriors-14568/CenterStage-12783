@@ -52,20 +52,21 @@ public class RedRight extends LinearOpMode {
         if (pos == Webcam.Position.Left) {
             aprilTag.setId(4);
             RunLeft(autoMethods);
-            StrafeInches = 36;
+            StrafeInches = 29;
         }
         else if (pos == Webcam.Position.Right){
             aprilTag.setId(6);
             RunRight(autoMethods);
-            StrafeInches = 24;
+            StrafeInches = 17;
         }
         else{
             aprilTag.setId(5);
             RunCenter(autoMethods);
-            StrafeInches = 30;
+            StrafeInches = 23;
         }
         autoMethods.GetToBoard(aprilTag, webcam,0.2,false);
         autoMethods.StrafeByInch(StrafeInches,true,0.2);
+        sleep(2000);
 
     }
 
@@ -73,13 +74,13 @@ public class RedRight extends LinearOpMode {
         blar.RunMotors(17, 0.5);
         blar.RunMotorHang(6.5, 1);
         blar.StrafeByInch(10, true, 0.4);
-        //motorIntake.setPower(-0.4);
-        //sleep(1500);
-        //motorIntake.setPower(0);
+        motorIntake.setPower(-0.4);
+        sleep(1500);
+        motorIntake.setPower(0);
         blar.StrafeByInch(13, true, 0.4);
         blar.Turn90(false, 0.4);
         //blar.StrafeByInch(3, false, 0.4);
-        blar.RunMotors(8.25, 0.2);
+        //blar.RunMotors(8.25, 0.2);
         //motorHang.setPower(0);
         //blar.RunMotorHang(-6.5,1);
         //blar.RunMotors(-4,0.5);
@@ -97,10 +98,10 @@ public class RedRight extends LinearOpMode {
         sleep(1500);
         blar.RunMotorHang(6.5, 1);
         motorIntake.setPower(0);
-        blar.StrafeByInch(46, true, 0.4);
-      /*  motorHang.setPower(0);
+        blar.StrafeByInch(40, true, 0.4);
         blar.Turn90(false, 0.4);
-        blar.StrafeByInch(7, false, 0.4);
+        motorHang.setPower(0);
+        /*blar.StrafeByInch(7, false, 0.4);
         blar.RunMotors(4.5, 0.2);
         blar.RunMotorHang(-6.5, 0.75);
         blar.RunMotors(-4, 0.5);

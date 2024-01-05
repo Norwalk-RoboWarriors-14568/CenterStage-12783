@@ -192,11 +192,4 @@ telemetry.update();
 
     }
 
-    private boolean MaxNotReached(DcMotor motor, float value) {
-        return motor.getCurrentPosition() < value;
-    }
-
-    private boolean MinNotReached(DcMotor motor, float value) {
-        return motor.getCurrentPosition() > value;
-    }
 }

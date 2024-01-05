@@ -206,7 +206,7 @@ public class AutoMethods {
             Strafe(strafeRight, motorPower);
         }
         ZeroMotors();
-        StrafeByInch(location.x - XOffSet, strafeRight, motorPower);
+        StrafeByInch(location.x - XOffSet, true, motorPower);
         FixPitch(location.pitch, motorPower);
         location = aprilTag.GetPositon(webcam.tagProcessor);
         RunMotors(location.y - 8.5,motorPower);

@@ -21,29 +21,35 @@ public class MecanumDrive extends OpMode {
      */
 
     // declare and initialize four DcMotors.
-    private DcMotor front_left  = null;
-    private DcMotor front_right = null;
-    private DcMotor back_left   = null;
-    private DcMotor back_right  = null, motorIntake, motorArmTilt, motorHang;
-    private float maxArmHeight = 70, minArmHeight= 0, maxArmLength = 50, minArmLength = 0, maxHang = 40;
-    private boolean  hangerPressed = false;
-    private Servo claw, hangTilt;
+    private DcMotor motorLeft, motorLeft2,
+            motorRight, motorRight2, motorIntake, motorHang;
+
+    private boolean mecanumDriveMode = true, coastMotors = true, hangerPressed = false;
+    private float mecanumStrafe = 0, dominantXJoystick = 0;
+    private ExtraMotors EM;
+    private float maxHang = 1000, droneEnd = 0;
+    private double driveMultiplier = 0.75;
+    private Servo drone, hangTilt;
     @Override
     public void init() {
 
         // Name strings must match up with the config on the Robot Controller
         // app.
-        front_left   = hardwareMap.get(DcMotor.class, "front_Left");
-        front_right  = hardwareMap.get(DcMotor.class, "front_Right");
-        back_left    = hardwareMap.get(DcMotor.class, "back_Left");
-        back_right   = hardwareMap.get(DcMotor.class, "back_Right");
-        motorIntake = hardwareMap.dcMotor.get("ArmE");
-        motorArmTilt = hardwareMap.dcMotor.get("ArmT");
+        motorLeft = hardwareMap.dcMotor.get("front_Left");
+        motorRight = hardwareMap.dcMotor.get("front_Right");
+        motorLeft2 = hardwareMap.dcMotor.get("back_Left");
+        motorRight2 = hardwareMap.dcMotor.get("back_Right");
+        motorIntake = hardwareMap.dcMotor.get("Intake");
         motorHang = hardwareMap.dcMotor.get("Hanger");
-        back_right.setDirection(DcMotor.Direction.REVERSE);
-        front_right.setDirection(DcMotor.Direction.REVERSE);
-        claw = hardwareMap.servo.get("Claw");
         hangTilt = hardwareMap.servo.get("HangerUp");
+        drone = hardwareMap.servo.get("drone");
+
+
+        //so you don't have to wire red to black, to maintain program logic
+        motorRight.setDirection(DcMotor.Direction.REVERSE);
+        motorRight2.setDirection(DcMotor.Direction.REVERSE);
+        //telemetry sends data to print onto both phones
+        telemetry.addLine("Drive Base TeleOp\nInit Opmode");
     }
 
     @Override
@@ -53,7 +59,7 @@ public class MecanumDrive extends OpMode {
         // strafe (left-and-right), and twist (rotating the whole chassis).
         double drive  = gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
-        double twist  = gamepad1.right_stick_x;
+        double twist  = -gamepad1.right_stick_x;
 
         /*
          * If we had a gyro and wanted to do field-oriented control, here
@@ -79,10 +85,6 @@ public class MecanumDrive extends OpMode {
         telemetry.addData("left_stick_y", gamepad1.left_stick_y);
         telemetry.addData("right_stick_x", gamepad1.right_stick_x);
         telemetry.addData("right_stick_x", gamepad1.right_stick_y);
-        telemetry.addData("Servo", claw.getPosition());
-        telemetry.addData("tilt: ", hangTilt.getPosition());
-        telemetry.addData("height: ",  motorArmTilt.getCurrentPosition());
-        telemetry.addData("extension: ", motorIntake.getCurrentPosition());
         telemetry.update();
         // You may need to multiply some of these by -1 to invert direction of
         // the motor.  This is not an issue with the calculations themselves.
@@ -110,28 +112,21 @@ public class MecanumDrive extends OpMode {
         }
 
         // apply the calculated values to the motors.
-        front_left.setPower(speeds[0]);
-        front_right.setPower(speeds[1]);
-        back_left.setPower(speeds[2]);
-        back_right.setPower(speeds[3]);
-        if (gamepad2.dpad_down && MinNotReached(motorArmTilt, minArmHeight)) {
-            motorArmTilt.setPower(-0.7);
-        } else if (gamepad2.dpad_up && MaxNotReached(motorArmTilt, maxArmHeight)) {
-            motorArmTilt.setPower(0.7);
-        }
-        else{ motorArmTilt.setPower(0);
-            motorArmTilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);}
-        if (gamepad2.left_trigger > 0.25 && MinNotReached(motorIntake, minArmLength)) {
-            motorIntake.setPower(gamepad2.left_trigger * -1);
-
-        } else if (gamepad2.right_trigger > 0.25 && MaxNotReached(motorIntake, maxArmLength)) {
+        motorLeft.setPower(speeds[0]);
+        motorRight.setPower(speeds[1]);
+        motorLeft2.setPower(speeds[2]);
+        motorRight2.setPower(speeds[3]);
+        if (gamepad2.left_trigger > 0.25 ) {
+            motorIntake.setPower(gamepad2.left_trigger * -0.5);
+            //intake
+        } else if (gamepad2.right_trigger > 0.25) {
             motorIntake.setPower(gamepad2.right_trigger);
         }
         else{
             motorIntake.setPower(0);
             motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        if (gamepad1.y && MaxNotReached(motorHang, maxHang)) {
+        if (gamepad1.y) {
             motorHang.setPower(1);
         }
         else if(gamepad1.x){
@@ -146,16 +141,13 @@ public class MecanumDrive extends OpMode {
         else if (gamepad1.dpad_down){
             hangTilt.setPosition(0);
         }
-        if (gamepad2.left_bumper) claw.setPosition(0.6);
-        else if (gamepad2.right_bumper) claw.setPosition(1);
+        if (gamepad2.a){
+            drone.setPosition(1);
+        }
+        else {
+            drone.setPosition(0);
+        }
 
-    }
-
-    private boolean MaxNotReached(DcMotor motor, float value){
-        return motor.getCurrentPosition() < value;
-    }
-    private boolean MinNotReached(DcMotor motor, float value) {
-        return motor.getCurrentPosition() > value;
     }
 
 }
