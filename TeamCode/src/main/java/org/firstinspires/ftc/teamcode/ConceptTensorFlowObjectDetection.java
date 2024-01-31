@@ -104,7 +104,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
-    private static final String TFOD_MODEL_ASSET = "Red_Bob.tflite";
+    private static final String TFOD_MODEL_ASSET = "redbob.tflite";
     private void initTfod() {
 
         // Create the TensorFlow processor by using a builder.

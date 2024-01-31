@@ -36,7 +36,7 @@ public class RedRight extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos = Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry);
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry,-0.5);
         webcam = new Webcam(camera, true);
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
@@ -67,18 +67,19 @@ public class RedRight extends LinearOpMode {
         autoMethods.GetToBoard(aprilTag, webcam,0.2,false);
         autoMethods.StrafeByInch(StrafeInches,true,0.2);
         sleep(2000);
+        //autoMethods.GetWhitePixel(aprilTag, webcam, true, StrafeInches , 0.4, 8);
 
     }
 
     void RunRight(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(17, 0.5);
         blar.RunMotorHang(6.5, 1);
+        blar.RunMotors(17, 0.4);
         blar.StrafeByInch(10, true, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         blar.StrafeByInch(13, true, 0.4);
-        blar.Turn90(false, 0.4);
+        blar.Turn90(false, 0.3);
         //blar.StrafeByInch(3, false, 0.4);
         //blar.RunMotors(8.25, 0.2);
         //motorHang.setPower(0);
@@ -92,14 +93,14 @@ public class RedRight extends LinearOpMode {
     }
 
     void RunLeft(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(25, 0.4);
-        blar.StrafeByInch(13, false, 0.4);
+        blar.RunMotors(24, 0.4);
+        blar.StrafeByInch(12, false, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         blar.RunMotorHang(6.5, 1);
         motorIntake.setPower(0);
-        blar.StrafeByInch(40, true, 0.4);
-        blar.Turn90(false, 0.4);
+        blar.StrafeByInch(43, true, 0.4);
+        blar.Turn90(false, 0.3);
         motorHang.setPower(0);
         /*blar.StrafeByInch(7, false, 0.4);
         blar.RunMotors(4.5, 0.2);
@@ -120,7 +121,7 @@ public class RedRight extends LinearOpMode {
         sleep(1500);
         motorIntake.setPower(0);
         blar.RunMotors(-2, 0.4);
-        blar.Turn90(false, 0.4);
+        blar.Turn90(false, 0.3);
         blar.StrafeByInch(3, false, 0.4);
         blar.RunMotors(18, 0.4);
        /* blar.RunMotors(3, 0.2);

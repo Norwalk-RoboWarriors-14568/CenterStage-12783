@@ -34,10 +34,10 @@ public class BlueRight extends LinearOpMode {
         Webcam.Position pos= Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
         aprilTag = new AprilTagTest(camera);
+        webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry);
-        webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry,-1);
         while(!opModeIsActive()){
 
             pos = webcam.CheckCamera();
@@ -82,14 +82,14 @@ public class BlueRight extends LinearOpMode {
         blar.RunMotorHang(-6.5,1);
         blar.RunMotors(-4,0.5);
         sleep(4000);
-        motorHang.setPower(0);
+        */motorHang.setPower(0);
 
-         */
+
 
 
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(17,0.5);
+        blar.RunMotors(17,0.4);
         blar.StrafeByInch(9, true, 0.2);
         motorIntake.setPower(-0.4);
         sleep(1500);
@@ -98,15 +98,17 @@ public class BlueRight extends LinearOpMode {
         blar.RunMotors(32,0.2);
         blar.Turn90(true, 0.2);
         blar.RunMotorHang(6.5,1);
-        blar.RunMotors(77, 0.5);
+        blar.RunMotors(77, 0.4);
        /* blar.StrafeByInch(12, false, 0.2);
         blar.RunMotors(5,0.2);
         blar.RunMotors(-4,0.2);
         blar.RunMotorHang(-6.5,0.75);
         sleep(5000);
-        motorHang.setPower(0);
 
         */
+        motorHang.setPower(0);
+
+
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
         sleep(5000);
@@ -115,7 +117,7 @@ public class BlueRight extends LinearOpMode {
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.RunMotorHang(6.5,0.2);
+        blar.RunMotorHang(6.5,0.4);
         blar.StrafeByInch(70, false, 0.2);
         blar.Turn90(true, 0.2);
        /* \blar.StrafeByInch(4, true, 0.2);
@@ -125,8 +127,8 @@ public class BlueRight extends LinearOpMode {
         blar.RunMotors(-4,0.5);
         blar.ZeroMotors();
         sleep(4000);
-        motorHang.setPower(0);
-        */
+        */motorHang.setPower(0);
+
 
     }
 

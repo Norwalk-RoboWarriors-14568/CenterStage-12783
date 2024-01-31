@@ -16,6 +16,7 @@ public class RedLeft extends LinearOpMode {
     AprilTagTest aprilTag;
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
+    private boolean FindTagStrafe;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,7 +34,7 @@ public class RedLeft extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos = Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry);
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry,-1);
         webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), true);
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
@@ -53,28 +54,31 @@ public class RedLeft extends LinearOpMode {
         if(pos == Webcam.Position.Left){
             aprilTag.setId(4);
             RunLeft(autoMethods);
+            FindTagStrafe = true;
         }
         else if (pos == Webcam.Position.Right){
             aprilTag.setId(6);
             RunRight(autoMethods);
+            FindTagStrafe = true;
         }
         else{
             aprilTag.setId(5);
             RunCenter(autoMethods);
+            FindTagStrafe = false;
         }
-        autoMethods.GetToBoard(aprilTag, webcam,0.2,true);
+        autoMethods.GetToBoard(aprilTag, webcam,0.2,FindTagStrafe);
         sleep(3000);
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(20,0.4);
-        blar.Turn90(false, 0.4);
+        blar.Turn90(false, 0.3);
         blar.StrafeByInch(11,false,0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         blar.StrafeByInch(18, false, 0.4);
         blar.RunMotorHang(6.5,0.75);
-        blar.RunMotors(72,0.5);
+        blar.RunMotors(72,0.4);
         /*blar.StrafeByInch(31, true, 0.2);
         motorHang.setPower(0);
         blar.RunMotors(5, 0.2);
@@ -95,9 +99,9 @@ public class RedLeft extends LinearOpMode {
         motorIntake.setPower(0);
         blar.StrafeByInch(12, true, 0.4);
         blar.RunMotors(32,0.4);
-        blar.Turn90(false, 0.4);
+        blar.Turn90(false, 0.3);
         blar.RunMotorHang(6.5,1);
-        blar.RunMotors(69, 0.5);
+        blar.RunMotors(69, 0.4);
         /*blar.StrafeByInch(14, true, 0.2);
         blar.RunMotors(4,0.2);
         blar.RunMotors(-4,0.2);
@@ -115,7 +119,7 @@ public class RedLeft extends LinearOpMode {
         motorIntake.setPower(0);
         blar.RunMotorHang(6.5,0.4);
         blar.StrafeByInch(72, true, 0.5);
-        blar.Turn90(false, 0.4);
+        blar.Turn90(false, 0.3);
         /*//blar.StrafeByInch(4, false, 0.2);
         blar.RunMotors(9, 0.2);
         motorHang.setPower(0);

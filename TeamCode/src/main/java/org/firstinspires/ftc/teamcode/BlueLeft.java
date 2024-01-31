@@ -16,6 +16,8 @@ public class BlueLeft extends LinearOpMode {
     AprilTagTest aprilTag;
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
+    private double StrafeInches;
+    private boolean FindTagStrafe;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,11 +35,11 @@ public class BlueLeft extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos= Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry,-0.5);
+        webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry);
-        webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
         while(!opModeIsActive()) {
 
             pos = webcam.CheckCamera();
@@ -53,29 +55,40 @@ public class BlueLeft extends LinearOpMode {
         if(pos == Webcam.Position.Left){
             aprilTag.setId(1);
             RunLeft(autoMethods);
+            StrafeInches = 24;
+            FindTagStrafe = false;
         }
         else if (pos == Webcam.Position.Right){
             aprilTag.setId(3);
             RunRight(autoMethods);
+            StrafeInches = 30;
+            FindTagStrafe = true;
         }
         else{
             aprilTag.setId(2);
             RunCenter(autoMethods);
+            StrafeInches = 30;
+            FindTagStrafe = false;
         }
-        //GetToBoard();
+        autoMethods.GetToBoard(aprilTag, webcam,0.2,FindTagStrafe);
+        autoMethods.StrafeByInch(StrafeInches,false,0.2);
+        sleep(3000);
+        //autoMethods.GetWhitePixel(aprilTag, webcam, false, StrafeInches , 0.4, 9);
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(17,0.5);
+        autoMethods.Drive(17,11,0,0.3);
+        /*blar.RunMotors(17,0.4);
         blar.RunMotorHang(6.5,1);
-        blar.StrafeByInch(13, false, 0.4);
-        //motorIntake.setPower(-0.4);
-        //sleep(1500);
-        //motorIntake.setPower(0);
-        blar.StrafeByInch(10,false,0.4);
-        blar.Turn90(true, 0.4);
-        blar.StrafeByInch(3, true, 0.4);
+        blar.StrafeByInch(11, false, 0.4);
+        motorIntake.setPower(-0.4);
+        sleep(1500);
+        motorIntake.setPower(0);
+        blar.StrafeByInch(21,false,0.4);
+        blar.Turn90(true, 0.3);
+        motorHang.setPower(0);
+        /*blar.StrafeByInch(3, true, 0.4);
         blar.RunMotors(11, 0.2);
-        /* motorHang.setPower(0);
+
         blar.RunMotorHang(-6.5,1);
         blar.RunMotors(-4,0.5);
         blar.StrafeByInch(20, false, 0.4);
@@ -85,17 +98,20 @@ public class BlueLeft extends LinearOpMode {
          */
 
 
+
+
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(25,0.4);
         blar.RunMotorHang(6.5,0.75);
+        blar.RunMotors(25,0.4);
         blar.StrafeByInch(10, true, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         blar.StrafeByInch(42,false,0.4);
-       /* motorHang.setPower(0);
-        blar.Turn90(true, 0.4);
+        blar.Turn90(true, 0.3);
+        motorHang.setPower(0);
+        /*
         blar.StrafeByInch(7, true, 0.4);
         blar.RunMotors(3.5, 0.2);
         blar.RunMotorHang(-6.5,0.75);
@@ -107,18 +123,19 @@ public class BlueLeft extends LinearOpMode {
         */
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(26,0.4);
         blar.RunMotorHang(6.5,0.75);
+        blar.RunMotors(26,0.4);
         blar.StrafeByInch(4, false, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
         blar.RunMotors(-2,0.4);
-        blar.Turn90(true, 0.4);
-        blar.StrafeByInch(3, true, 0.4);
-        blar.RunMotors(23, 0.4);
-        /* blar.RunMotors(5, 0.2);
+        blar.Turn90(true, 0.3);
         motorHang.setPower(0);
+        blar.RunMotors(24, 0.4);
+        /*blar.StrafeByInch(3, true, 0.4);
+        motorHang.setPower(0);
+        blar.RunMotors(5, 0.2);
         blar.RunMotorHang(-6.5,0.75);
         blar.RunMotors(-4,0.5);
         blar.StrafeByInch(25, false, 0.4);

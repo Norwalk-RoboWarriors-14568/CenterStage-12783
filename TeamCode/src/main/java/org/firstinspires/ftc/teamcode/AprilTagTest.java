@@ -43,7 +43,7 @@ public class AprilTagTest {
                 TagLocation blar = new TagLocation();
                 blar.x = detection.ftcPose.x;
                 blar.y = detection.ftcPose.y;
-                blar.pitch = detection.ftcPose.pitch;
+                blar.yaw = detection.ftcPose.yaw;
                 return blar;
             }
         }
@@ -56,7 +56,7 @@ public class AprilTagTest {
     public class TagLocation {
         double x;
         double y;
-        double pitch;
+        double yaw;
     }
 }
 
