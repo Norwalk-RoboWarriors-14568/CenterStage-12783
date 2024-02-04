@@ -37,6 +37,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
+
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
@@ -103,7 +104,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
-    private static final String TFOD_MODEL_ASSET = "Red_Bob.tflite";
+    private static final String TFOD_MODEL_ASSET = "redbob.tflite";
     private void initTfod() {
 
         // Create the TensorFlow processor by using a builder.

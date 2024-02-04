@@ -13,9 +13,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class RedLeft extends LinearOpMode {
     Webcam webcam;
     private AutoMethods autoMethods;
-
+    AprilTagTest aprilTag;
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
+    private boolean FindTagStrafe;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,8 +33,12 @@ public class RedLeft extends LinearOpMode {
         motorLeft2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos = Webcam.Position.Left;
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang);
+        CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry,-1);
         webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), true);
+        aprilTag = new AprilTagTest(camera);
+        webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
+        webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
         while(!opModeIsActive()){
 
              pos = webcam.CheckCamera();
@@ -43,23 +48,38 @@ public class RedLeft extends LinearOpMode {
             sleep (2000);
 
         }
+        webcam.visionPortal.setProcessorEnabled(webcam.tfod, false);
+        webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, true);
         waitForStart();
-        if(pos == Webcam.Position.Left) RunLeft(autoMethods);
-        else if (pos == Webcam.Position.Right) RunRight(autoMethods);
-        else RunCenter(autoMethods);
-
+        if(pos == Webcam.Position.Left){
+            aprilTag.setId(4);
+            RunLeft(autoMethods);
+            FindTagStrafe = true;
+        }
+        else if (pos == Webcam.Position.Right){
+            aprilTag.setId(6);
+            RunRight(autoMethods);
+            FindTagStrafe = true;
+        }
+        else{
+            aprilTag.setId(5);
+            RunCenter(autoMethods);
+            FindTagStrafe = false;
+        }
+        autoMethods.GetToBoard(aprilTag, webcam,0.2,FindTagStrafe);
+        sleep(3000);
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(20,0.2);
-        blar.Turn90(false, 0.2);
-        blar.StrafeByInch(11,false,0.2);
+        blar.RunMotors(20,0.4);
+        blar.Turn90(false, 0.3);
+        blar.StrafeByInch(11,false,0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.StrafeByInch(18, false, 0.2);
+        blar.StrafeByInch(18, false, 0.4);
         blar.RunMotorHang(6.5,0.75);
-        blar.RunMotors(83,0.2);
-        blar.StrafeByInch(33, true, 0.2);
+        blar.RunMotors(72,0.4);
+        /*blar.StrafeByInch(31, true, 0.2);
         motorHang.setPower(0);
         blar.RunMotors(5, 0.2);
         blar.RunMotorHang(-6.5,1);
@@ -67,44 +87,49 @@ public class RedLeft extends LinearOpMode {
         sleep(4000);
         motorHang.setPower(0);
 
+        */
+
 
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
-        blar.RunMotors(17,0.3);
-        blar.StrafeByInch(13, false, 0.2);
+        blar.RunMotors(17,0.4);
+        blar.StrafeByInch(12, false, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.StrafeByInch(13, true, 0.2);
-        blar.RunMotors(32,0.2);
-        blar.Turn90(false, 0.2);
+        blar.StrafeByInch(12, true, 0.4);
+        blar.RunMotors(32,0.4);
+        blar.Turn90(false, 0.3);
         blar.RunMotorHang(6.5,1);
-        blar.RunMotors(83, 0.3);
-        blar.StrafeByInch(15, true, 0.2);
+        blar.RunMotors(69, 0.4);
+        /*blar.StrafeByInch(14, true, 0.2);
         blar.RunMotors(4,0.2);
         blar.RunMotors(-4,0.2);
         blar.RunMotorHang(-6.5,0.75);
         sleep(5000);
         motorHang.setPower(0);
+
+         */
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
-        sleep(5000);
-        blar.RunMotors(25,0.2);
-        blar.StrafeByInch(4, true, 0.2);
-        motorIntake.setPower(-0.4);
+        blar.RunMotors(25,0.4);
+        blar.StrafeByInch(4, true, 0.4);
+        motorIntake.setPower(-0.45);
         sleep(1500);
         motorIntake.setPower(0);
-        blar.RunMotorHang(6.5,0.3);
-        blar.StrafeByInch(72, true, 0.2);
-        blar.Turn90(false, 0.2);
-        //blar.StrafeByInch(4, false, 0.2);
-        blar.RunMotors(12, 0.2);
+        blar.RunMotorHang(6.5,0.4);
+        blar.StrafeByInch(72, true, 0.5);
+        blar.Turn90(false, 0.3);
+        /*//blar.StrafeByInch(4, false, 0.2);
+        blar.RunMotors(9, 0.2);
         motorHang.setPower(0);
         blar.RunMotorHang(-6.5,1);
         blar.RunMotors(-4,0.5);
         blar.ZeroMotors();
         sleep(4000);
         motorHang.setPower(0);
+
+         */
     }
 
 }
