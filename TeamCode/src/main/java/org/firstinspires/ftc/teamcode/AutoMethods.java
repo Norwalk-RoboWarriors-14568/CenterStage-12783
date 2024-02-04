@@ -259,7 +259,7 @@ public class AutoMethods {
             telemetry.addData("FR - CP - TP - P: ",Integer.toString(motorRight.getCurrentPosition()) + " " + Integer.toString(motorRight.getTargetPosition()) + " " + RMP);
             telemetry.addData("BR - CP - TP - P: ",Integer.toString(motorRight2.getCurrentPosition()) + " " + Integer.toString(motorRight2.getTargetPosition()) + " " + R2MP);
             telemetry.addData("FL - CP - TP - P: ",Integer.toString(motorLeft.getCurrentPosition()) + " " + Integer.toString(motorLeft.getTargetPosition()) + " " + LMP);
-            telemetry.addData("BL - CP - TP - P: ",Integer.toString(motorLeft2.getCurrentPosition()) + " " + Integer.toString(motorLeft2.getTargetPosition()) + " " + R2MP);
+            telemetry.addData("BL - CP - TP - P: ",Integer.toString(motorLeft2.getCurrentPosition()) + " " + Integer.toString(motorLeft2.getTargetPosition()) + " " + L2MP);
             telemetry.addData("Max Ticks", Integer.toString(maxTicks) + " " + rightTicks + " " + right2Ticks + " " + leftTicks + " " + left2Ticks);
             telemetry.addData("ST", strafeTick);
             telemetry.addData("AT", angleTicks);
@@ -340,17 +340,38 @@ public class AutoMethods {
 
          */
     }
-    void Drive (double driveInches, double driveStrafe, int degreeTurn, double motorPower){
+    void Drive (double driveInches, double driveStrafe, double motorPower){
         int rightTicks, right2Ticks, leftTicks, left2Ticks;
         int strafeTick = Math.abs(StrafeInchesToTicks(driveStrafe));
-        double degree = degreeTurn;
-        int angleTicks = Math.abs((int)(degree * TicksPerDeg));
+        //double degree = degreeTurn;
+        //int angleTicks = Math.abs((int)(degree * TicksPerDeg));
         boolean strafeRight = driveStrafe >= 0;
-        boolean turnRight = degree <= 0;
-        right2Ticks = StrafeInchesToTicks(driveInches);
-        rightTicks = StrafeInchesToTicks(driveInches);
-        left2Ticks = StrafeInchesToTicks(driveInches);
-        leftTicks = StrafeInchesToTicks(driveInches);
+        //boolean turnRight = degree <= 0;
+        int leftLateralTicks = GetLateralTicks(driveInches, strafeRight ? -driveStrafe : driveStrafe);
+        int left2LateralTicks = GetLateralTicks(driveInches, strafeRight ? driveStrafe : -driveStrafe);
+        int rightLateralTicks = GetLateralTicks(driveInches, strafeRight ? driveStrafe : -driveStrafe);
+        int right2LateralTicks = GetLateralTicks(driveInches, strafeRight ? -driveStrafe : driveStrafe);
+        int maxLateralTicks = Math.max(Math.abs(left2LateralTicks), Math.max(Math.abs(leftLateralTicks), Math.max(Math.abs(right2LateralTicks), Math.abs(rightLateralTicks))));
+        //double anglePower = (double)angleTicks / maxLateralTicks;
+        /*right2Ticks = ConvertInchesToTicks(driveInches);
+        rightTicks = ConvertInchesToTicks(driveInches);
+        left2Ticks = ConvertInchesToTicks(driveInches);
+        leftTicks = ConvertInchesToTicks(driveInches);
+
+
+
+        if (strafeRight) {
+            right2Ticks =  right2LateralTicks - angleTicks;
+            rightTicks =  rightLateralTicks - angleTicks;
+            left2Ticks = left2LateralTicks + angleTicks;
+            leftTicks = leftLateralTicks + angleTicks;
+        }
+        else{
+            right2Ticks =  right2LateralTicks + angleTicks;
+            rightTicks =  rightLateralTicks + angleTicks;
+            left2Ticks = left2LateralTicks - angleTicks;
+            leftTicks = leftLateralTicks - angleTicks;
+        }
 
         if(strafeRight && turnRight){
             right2Ticks +=  -strafeTick - angleTicks;
@@ -376,11 +397,17 @@ public class AutoMethods {
             left2Ticks += -strafeTick - angleTicks;
             leftTicks += strafeTick - angleTicks;
         }
-        int maxTicks = Math.max(Math.abs(left2Ticks), Math.max(Math.abs(leftTicks), Math.max(Math.abs(right2Ticks), Math.abs(rightTicks))));
-        leftTarget = motorLeft.getCurrentPosition() + leftTicks;
-        left2Target = motorLeft2.getCurrentPosition() + left2Ticks;
-        rightTarget = motorRight.getCurrentPosition() + rightTicks;
-        right2Target = motorRight2.getCurrentPosition() + right2Ticks;
+
+         */
+        //int maxTicks = Math.max(Math.abs(left2Ticks), Math.max(Math.abs(leftTicks), Math.max(Math.abs(right2Ticks), Math.abs(rightTicks))));
+        double leftLatPower = ((double)leftLateralTicks/maxLateralTicks) * motorPower;
+        double left2LatPower = ((double)left2LateralTicks/maxLateralTicks) * motorPower;
+        double rightLatPower = ((double)rightLateralTicks/maxLateralTicks) * motorPower;
+        double right2LatPower = ((double)right2LateralTicks/maxLateralTicks) * motorPower;
+        leftTarget = motorLeft.getCurrentPosition() + leftLateralTicks;
+        left2Target = motorLeft2.getCurrentPosition() + left2LateralTicks;
+        rightTarget = motorRight.getCurrentPosition() + rightLateralTicks;
+        right2Target = motorRight2.getCurrentPosition() + right2LateralTicks;
         motorRight2.setTargetPosition(right2Target);
         motorRight.setTargetPosition(rightTarget);
         motorLeft2.setTargetPosition(left2Target);
@@ -389,26 +416,39 @@ public class AutoMethods {
         motorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLeft2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorRight2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        double LMP = ((double)Math.abs(leftTicks) / maxTicks) * motorPower;
+        /*double LMP = ((double)Math.abs(leftTicks) / maxTicks) * motorPower;
         double RMP = ((double)Math.abs(rightTicks) / maxTicks) * motorPower;
         double R2MP = ((double)Math.abs(right2Ticks) / maxTicks) * motorPower;
         double L2MP = ((double)Math.abs(left2Ticks) / maxTicks) * motorPower;
+
+         */
+        //double LMP = Math.abs(leftLatPower + (turnRight ? anglePower : -anglePower));
+        //double RMP = Math.abs(rightLatPower + (turnRight ? -anglePower : anglePower));
+        //double L2MP = Math.abs(left2LatPower + (turnRight ? anglePower : -anglePower));
+        //double R2MP = Math.abs(right2LatPower + (turnRight ? -anglePower : anglePower));
+        //double maxPower = Math.max(Math.abs(LMP), Math.max(Math.abs(L2MP), Math.max(Math.abs(R2MP), Math.abs(RMP))));
+        //LMP = (LMP/maxPower) * motorPower;
+        //RMP = (RMP/maxPower) * motorPower;
+        //L2MP = (L2MP/maxPower) * motorPower;
+        //R2MP = (R2MP/maxPower) * motorPower;
+
         while(!AtTarget()) {
-            motorLeft.setPower(LMP);
-            motorRight.setPower(RMP);
-            motorRight2.setPower(R2MP);
-            motorLeft2.setPower(L2MP);
-            telemetry.addData("FR - CP - TP - P: ",Integer.toString(motorRight.getCurrentPosition()) + " " + Integer.toString(motorRight.getTargetPosition()) + " " + RMP);
-            telemetry.addData("BR - CP - TP - P: ",Integer.toString(motorRight2.getCurrentPosition()) + " " + Integer.toString(motorRight2.getTargetPosition()) + " " + R2MP);
-            telemetry.addData("FL - CP - TP - P: ",Integer.toString(motorLeft.getCurrentPosition()) + " " + Integer.toString(motorLeft.getTargetPosition()) + " " + LMP);
-            telemetry.addData("BL - CP - TP - P: ",Integer.toString(motorLeft2.getCurrentPosition()) + " " + Integer.toString(motorLeft2.getTargetPosition()) + " " + R2MP);
-            telemetry.addData("Max Ticks", Integer.toString(maxTicks) + " " + rightTicks + " " + right2Ticks + " " + leftTicks + " " + left2Ticks);
+            motorLeft.setPower(leftLatPower);
+            motorRight.setPower(rightLatPower);
+            motorRight2.setPower(right2LatPower);
+            motorLeft2.setPower(left2LatPower);
+            telemetry.addData("FR - CP - TP - P: ",Integer.toString(motorRight.getCurrentPosition()) + " " + Integer.toString(motorRight.getTargetPosition()) + " " + rightLatPower);
+            telemetry.addData("BR - CP - TP - P: ",Integer.toString(motorRight2.getCurrentPosition()) + " " + Integer.toString(motorRight2.getTargetPosition()) + " " + right2LatPower);
+            telemetry.addData("FL - CP - TP - P: ",Integer.toString(motorLeft.getCurrentPosition()) + " " + Integer.toString(motorLeft.getTargetPosition()) + " " + leftLatPower);
+            telemetry.addData("BL - CP - TP - P: ",Integer.toString(motorLeft2.getCurrentPosition()) + " " + Integer.toString(motorLeft2.getTargetPosition()) + " " + left2LatPower);
+            telemetry.addData("Max Ticks", Integer.toString(maxLateralTicks) + " " + rightLateralTicks + " " + right2LateralTicks + " " + leftLateralTicks + " " + left2LateralTicks);
             telemetry.addData("ST", strafeTick);
-            telemetry.addData("AT", angleTicks);
-            telemetry.addData("DAB", Double.toString(degree) +  " " + degreeTurn);
             telemetry.update();
         }
         ZeroMotors();
+    }
+    private int GetLateralTicks(double driveInches, double driveStrafe){
+        return StrafeInchesToTicks(driveStrafe) + ConvertInchesToTicks(driveInches);
     }
 
 }

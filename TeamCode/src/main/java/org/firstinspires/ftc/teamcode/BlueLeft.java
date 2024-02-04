@@ -55,7 +55,7 @@ public class BlueLeft extends LinearOpMode {
         if(pos == Webcam.Position.Left){
             aprilTag.setId(1);
             RunLeft(autoMethods);
-            StrafeInches = 24;
+            StrafeInches = 22;
             FindTagStrafe = false;
         }
         else if (pos == Webcam.Position.Right){
@@ -76,8 +76,8 @@ public class BlueLeft extends LinearOpMode {
         //autoMethods.GetWhitePixel(aprilTag, webcam, false, StrafeInches , 0.4, 9);
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
-        autoMethods.Drive(17,11,0,0.3);
-        /*blar.RunMotors(17,0.4);
+        //autoMethods.Drive(17,-11,0.5);
+        blar.RunMotors(17,0.4);
         blar.RunMotorHang(6.5,1);
         blar.StrafeByInch(11, false, 0.4);
         motorIntake.setPower(-0.4);
@@ -103,11 +103,14 @@ public class BlueLeft extends LinearOpMode {
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
         blar.RunMotorHang(6.5,0.75);
+        //autoMethods.Drive(30,6,0.5);
+        //sleep(10000);
         blar.RunMotors(25,0.4);
         blar.StrafeByInch(10, true, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
+        //autoMethods.Drive(-42,0,0.5);
         blar.StrafeByInch(42,false,0.4);
         blar.Turn90(true, 0.3);
         motorHang.setPower(0);
