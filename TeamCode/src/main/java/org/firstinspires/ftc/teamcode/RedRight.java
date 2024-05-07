@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
@@ -19,9 +22,12 @@ public class RedRight extends LinearOpMode {
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
     private double StrafeInches;
+    ColorSensor color;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        color = hardwareMap.get(ColorSensor.class, "color");
+        color.enableLed(true);
         motorLeft = hardwareMap.dcMotor.get("front_Left");
         motorRight = hardwareMap.dcMotor.get("front_Right");
         motorLeft2 = hardwareMap.dcMotor.get("back_Left");
@@ -36,16 +42,28 @@ public class RedRight extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos = Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry,-0.5);
+        RevBlinkinLedDriver ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry, ledDriver, -0.5);
         webcam = new Webcam(camera, true);
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
+        autoMethods.Color(78);
         while(!opModeIsActive()) {
             pos = webcam.CheckCamera();
             telemetry.addData("detected x", pos);
             telemetry.update();
             sleep (2000);
+
+            if(pos == Webcam.Position.Left){
+                autoMethods.Color(85);
+            }
+            else if (pos == Webcam.Position.Right){
+                autoMethods.Color(96);
+            }
+            else{
+                autoMethods.Color(87);
+            }
         }
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, false);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, true);
@@ -67,11 +85,14 @@ public class RedRight extends LinearOpMode {
         autoMethods.GetToBoard(aprilTag, webcam,0.2,false);
         autoMethods.StrafeByInch(StrafeInches,true,0.2);
         sleep(2000);
+        color.enableLed(false);
+        autoMethods.Color(100);
         //autoMethods.GetWhitePixel(aprilTag, webcam, true, StrafeInches , 0.4, 8);
 
     }
 
     void RunRight(AutoMethods blar) throws InterruptedException {
+        //sleep(10000);
         blar.RunMotorHang(6.5, 1);
         blar.RunMotors(17, 0.4);
         blar.StrafeByInch(10, true, 0.4);
@@ -93,6 +114,7 @@ public class RedRight extends LinearOpMode {
     }
 
     void RunLeft(AutoMethods blar) throws InterruptedException {
+        //sleep(10000);
         blar.RunMotors(24, 0.4);
         blar.StrafeByInch(12, false, 0.4);
         motorIntake.setPower(-0.4);
@@ -114,6 +136,7 @@ public class RedRight extends LinearOpMode {
     }
 
     void RunCenter(AutoMethods blar) throws InterruptedException {
+        //sleep(10000);
         blar.RunMotors(26, 0.4);
         blar.RunMotorHang(6.5, 0.75);
         blar.StrafeByInch(4, true, 0.4);

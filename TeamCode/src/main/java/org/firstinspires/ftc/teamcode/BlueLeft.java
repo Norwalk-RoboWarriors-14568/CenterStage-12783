@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptTensorFlowObjectDetection;
@@ -18,9 +21,12 @@ public class BlueLeft extends LinearOpMode {
             motorRight, motorRight2, motorIntake, motorHang;
     private double StrafeInches;
     private boolean FindTagStrafe;
+    ColorSensor color;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        color = hardwareMap.get(ColorSensor.class, "color");
+        color.enableLed(true);
         motorLeft = hardwareMap.dcMotor.get("front_Left");
         motorRight = hardwareMap.dcMotor.get("front_Right");
         motorLeft2 = hardwareMap.dcMotor.get("back_Left");
@@ -35,18 +41,30 @@ public class BlueLeft extends LinearOpMode {
         motorRight2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Webcam.Position pos= Webcam.Position.Left;
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry,-0.5);
+        RevBlinkinLedDriver ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry, ledDriver, -0.5);
         webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
         aprilTag = new AprilTagTest(camera);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
+        autoMethods.Color(78);
         while(!opModeIsActive()) {
 
             pos = webcam.CheckCamera();
 
+
             telemetry.addData("detected x", pos);
             telemetry.update();
             sleep (2000);
+            if(pos == Webcam.Position.Left){
+                autoMethods.Color(85);
+            }
+            else if (pos == Webcam.Position.Right){
+                autoMethods.Color(96);
+            }
+            else{
+                autoMethods.Color(87);
+            }
 
 
         }
@@ -73,10 +91,13 @@ public class BlueLeft extends LinearOpMode {
         autoMethods.GetToBoard(aprilTag, webcam,0.2,FindTagStrafe);
         autoMethods.StrafeByInch(StrafeInches,false,0.2);
         sleep(3000);
+        color.enableLed(false);
+        autoMethods.Color(100);
         //autoMethods.GetWhitePixel(aprilTag, webcam, false, StrafeInches , 0.4, 9);
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
-        //autoMethods.Drive(17,-11,0.5);
+        //sleep(10000);
+        //autoMethods.Drive(17,-11,0,0.5);
         blar.RunMotors(17,0.4);
         blar.RunMotorHang(6.5,1);
         blar.StrafeByInch(11, false, 0.4);
@@ -102,18 +123,26 @@ public class BlueLeft extends LinearOpMode {
 
     }
     void RunRight(AutoMethods blar) throws InterruptedException {
-        blar.RunMotorHang(6.5,0.75);
-        //autoMethods.Drive(30,6,0.5);
         //sleep(10000);
+        blar.RunMotorHang(6.5,0.75);
+        //autoMethods.Drive(20,10,0,1087,0.5);
+        //sleep(400000);
         blar.RunMotors(25,0.4);
         blar.StrafeByInch(10, true, 0.4);
         motorIntake.setPower(-0.4);
         sleep(1500);
         motorIntake.setPower(0);
-        //autoMethods.Drive(-42,0,0.5);
+        //autoMethods.Drive(-42,0,0,0.5);
         blar.StrafeByInch(42,false,0.4);
         blar.Turn90(true, 0.3);
         motorHang.setPower(0);
+
+
+
+
+
+
+
         /*
         blar.StrafeByInch(7, true, 0.4);
         blar.RunMotors(3.5, 0.2);
@@ -126,6 +155,7 @@ public class BlueLeft extends LinearOpMode {
         */
     }
     void RunCenter(AutoMethods blar) throws InterruptedException {
+        //sleep(10000);
         blar.RunMotorHang(6.5,0.75);
         blar.RunMotors(26,0.4);
         blar.StrafeByInch(4, false, 0.4);

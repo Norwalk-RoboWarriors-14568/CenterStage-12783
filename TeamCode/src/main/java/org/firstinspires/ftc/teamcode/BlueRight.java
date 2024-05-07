@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
@@ -16,9 +19,12 @@ public class BlueRight extends LinearOpMode {
 
     private DcMotor motorLeft, motorLeft2,
             motorRight, motorRight2, motorIntake, motorHang;
+    ColorSensor color;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        color = hardwareMap.get(ColorSensor.class, "color");
+        color.enableLed(true);
         motorLeft = hardwareMap.dcMotor.get("front_Left");
         motorRight = hardwareMap.dcMotor.get("front_Right");
         motorLeft2 = hardwareMap.dcMotor.get("back_Left");
@@ -37,7 +43,9 @@ public class BlueRight extends LinearOpMode {
         webcam = new Webcam(hardwareMap.get(WebcamName.class, "Webcam 1"), false);
         webcam.visionPortal.setProcessorEnabled(webcam.tfod, true);
         webcam.visionPortal.setProcessorEnabled(webcam.tagProcessor, false);
-        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry,-1);
+        RevBlinkinLedDriver ledDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        autoMethods = new AutoMethods(motorLeft, motorLeft2, motorRight, motorRight2, motorIntake, motorHang, telemetry, ledDriver, -1);
+        autoMethods.Color(78);
         while(!opModeIsActive()){
 
             pos = webcam.CheckCamera();
@@ -45,6 +53,16 @@ public class BlueRight extends LinearOpMode {
             telemetry.addData("detected x", pos);
             telemetry.update();
             sleep (2000);
+
+            if(pos == Webcam.Position.Left){
+                autoMethods.Color(85);
+            }
+            else if (pos == Webcam.Position.Right){
+                autoMethods.Color(96);
+            }
+            else{
+                autoMethods.Color(87);
+            }
 
 
         }
@@ -65,6 +83,8 @@ public class BlueRight extends LinearOpMode {
         }
         autoMethods.GetToBoard(aprilTag, webcam,0.2,false);
         sleep(3000);
+        color.enableLed(false);
+        autoMethods.Color(100);
     }
     void RunLeft(AutoMethods blar) throws InterruptedException {
         blar.RunMotors(20,0.2);

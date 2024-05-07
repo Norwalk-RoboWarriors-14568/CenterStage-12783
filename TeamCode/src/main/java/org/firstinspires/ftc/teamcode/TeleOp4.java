@@ -2,10 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Timer;
 
 //import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -31,6 +37,10 @@ public class TeleOp4 extends OpMode {
     private float maxHang = 1000, droneEnd = 0;
     private double driveMultiplier = 0.75;
     private Servo drone, hangTilt;
+    ColorSensor color;
+    RevBlinkinLedDriver blinkinLedDriver;
+    ElapsedTime timer;
+    boolean timerStarting;
 
     /*
      * Code to run when the op mode is first enabled goes here
@@ -38,6 +48,11 @@ public class TeleOp4 extends OpMode {
      */
     @Override
     public void init() {
+        timerStarting = false;
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(99));
+        color = hardwareMap.get(ColorSensor.class, "color");
+        color.enableLed(false);
 
 //rev hub 1
         motorLeft = hardwareMap.dcMotor.get("front_Left");
@@ -63,7 +78,14 @@ public class TeleOp4 extends OpMode {
      */
     @Override
     public void loop() {
-
+        if(!timerStarting) {
+            timer = new ElapsedTime();
+            timerStarting = true;
+        }
+        if(timer.seconds() > 80) {
+            blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.fromNumber(82));
+        }
+        telemetry.addLine("timer seconds " + timer.seconds());
         telemetry.addLine("Loop OpMode\ndPadLeft: disable mecanum strafe is " + !mecanumDriveMode +
                 "\ndPadRight: enable mecanum strafe is " + mecanumDriveMode +
                 "\nX: brake motors is " + !coastMotors + "\nY: coast motors is " + coastMotors);
@@ -82,7 +104,7 @@ public class TeleOp4 extends OpMode {
         telemetry.addData("Servo", drone.getPosition());
         telemetry.addData("tilt: ", hangTilt.getPosition());
         telemetry.addData("extension: ", motorIntake.getCurrentPosition());
-telemetry.update();
+        telemetry.update();
         //allows for 3-speed joystick control
 
         if (abs(gamepad1.left_stick_x) > 0.15 || abs(gamepad1.right_stick_x) > 0.15) {
@@ -138,7 +160,7 @@ telemetry.update();
         }
 //outtake
         if (gamepad2.left_trigger > 0.25 ) {
-            motorIntake.setPower(gamepad2.left_trigger * -0.5);
+            motorIntake.setPower(gamepad2.left_trigger * -0.35);
             //intake
         } else if (gamepad2.right_trigger > 0.25) {
             motorIntake.setPower(gamepad2.right_trigger);
